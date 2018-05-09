@@ -1,0 +1,11 @@
+Get-CMTSStepApplyOperatingSystem     
+Get-CMTSStepApplyWindowsSetting      
+Remove-CMTSStepApplyOperatingSystem      
+Remove-CMTSStepApplyWindowsSetting       
+New-CMTSStepApplyOperatingSystem     
+New-CMTSStepApplyWindowsSetting      
+Set-CMTSStepApplyOperatingSystem     
+Set-CMTSStepApplyWindowsSetting      
+Invoke-CMAmtProvisioningDiscovery    
+New-CMAmtProvisioningAccount         
+Set-CMPowerControl
