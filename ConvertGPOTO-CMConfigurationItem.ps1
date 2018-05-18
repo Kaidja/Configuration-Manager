@@ -13,7 +13,6 @@ Function Get-GPSettings {
         Foreach ($RegKey in $CurrentRegKey) { 
             If ($RegKey.ValueName -ne $null){
                 Write-Output $RegKey
-                [ARRAY]$ReturnKey += $RegKey 
             } 
             Else{
                 Get-GPSettings -Key $RegKey.FullKeyPath -GPOName $GPOName
