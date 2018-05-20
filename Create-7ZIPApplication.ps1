@@ -1,5 +1,4 @@
 #STEP 0 - Import the Module
-# Import Module
 Import-Module $env:SMS_ADMIN_UI_PATH.Replace("\bin\i386","\bin\configurationmanager.psd1")
 $SiteCode = Get-PSDrive -PSProvider CMSITE
 Set-Location "$($SiteCode.Name):\"
@@ -11,13 +10,21 @@ Invoke-WebRequest -Uri $7ZIPURL -OutFile $SourceFolder
 
 #STEP 2 - Get the file information
 $FileInfo = Get-Item -Path $SourceFolder
-$FileInfo.VersionInfo.ProductVersion
-$FileInfo.BaseName
+$Version = $FileInfo.VersionInfo.ProductVersion
+$FileName = $FileInfo.BaseName
+$ApplicationName = '7-ZIP'
+$CommandLine = "$($FileInfo.Name) /S"
+$DeploymentTypeName = "Install - $FileName"
+$ContentLocation = '\\cm01\sources\Software\7-ZIP\18.05\X64\EXE'
+$DistributionPointGroupName = 'All Content'
+$InstallCollectionName = "SWD - $ApplicationName - $Version"
+$LimitingCollectionName = 'All Systems'
+$SoftwareAPPRootFolder = "$($SiteCode.Name):\DeviceCollection\Software"
 
 #STEP 3 - Create the Application
     $AppProperties = @{
-        Name = $FileInfo.BaseName;
-        SoftwareVersion = $FileInfo.VersionInfo.ProductVersion
+        Name = $ApplicationName;
+        SoftwareVersion = $Version
     }
 
 New-CMApplication @AppProperties
@@ -33,7 +40,10 @@ New-CMApplication @AppProperties
         FileName = '7zFM.exe';
         Path = 'C:\Program Files\7-Zip';
         Is64Bit = $True;
-        Existence = $True
+        PropertyType = 'Version';
+        ExpectedValue = '18.05';
+        ExpressionOperator = 'IsEquals'
+        Value = $True
     }
 
 $7ZIPFolder = New-CMDetectionClauseDirectory @7ZIPFolderProperties
@@ -41,35 +51,34 @@ $7ZIPFile = New-CMDetectionClauseFile @7ZIPFileProperties
 
 #STEP 5 - Create the Deployment Type with detection methods
 $DeploymentTypeProperties = @{
-    InstallCommand = "$($FileInfo.Name) /S"
-    DeploymentTypeName = 'Install - 7-ZIP'
-    ApplicationName = $FileInfo.BaseName
-    ContentLocation = '\\cm01\sources\Software\7-ZIP\18.05\X64\EXE'
+    InstallCommand = $CommandLine
+    DeploymentTypeName = $DeploymentTypeName
+    ApplicationName = $ApplicationName
+    ContentLocation = $ContentLocation
     AddDetectionClause = $7ZIPFolder,$7ZIPFile
 }
 Add-CMScriptDeploymentType @DeploymentTypeProperties
 
 #STEP 6 - Distribute the Content
     $ContentProperties = @{
-        ApplicationName = $FileInfo.BaseName
-        DistributionPointGroupName = 'All Content'
+        ApplicationName = $ApplicationName
+        DistributionPointGroupName = $DistributionPointGroupName
     }
 Start-CMContentDistribution @ContentProperties
 
 #STEP 7 - Create the Collection
     $CollectionProperties = @{
-        Name = "SWD - $($FileInfo.BaseName) $($FileInfo.VersionInfo.ProductVersion)";
-        LimitingCollectionName = 'All Systems';
+        Name = $InstallCollectionName;
+        LimitingCollectionName = $LimitingCollectionName;
         CollectionType = 'Device'
     }
-New-CMCollection @CollectionProperties | Move-CMObject -FolderPath PS1:\DeviceCollection\Software
+New-CMCollection @CollectionProperties | Move-CMObject -FolderPath $SoftwareAPPRootFolder
 
 #STEP 8 - Create the Deployment
     $DeploymentProperties = @{
-        Name = $FileInfo.BaseName;
+        Name = $ApplicationName;
         DeployAction = 'Install';
         DeployPurpose = 'Required';
-        CollectionName = "SWD - $($FileInfo.BaseName) $($FileInfo.VersionInfo.ProductVersion)"
+        CollectionName = $InstallCollectionName
     }
 New-CMApplicationDeployment @DeploymentProperties
-
