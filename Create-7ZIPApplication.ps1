@@ -12,6 +12,8 @@ Invoke-WebRequest -Uri $7ZIPURL -OutFile $SourceFolder
 $FileInfo = Get-Item -Path $SourceFolder
 $Version = $FileInfo.VersionInfo.ProductVersion
 $FileName = $FileInfo.BaseName
+
+#Define additional variables for 7-ZIP Application
 $ApplicationName = '7-ZIP'
 $CommandLine = "$($FileInfo.Name) /S"
 $DeploymentTypeName = "Install - $FileName"
@@ -41,7 +43,7 @@ New-CMApplication @AppProperties
         Path = 'C:\Program Files\7-Zip';
         Is64Bit = $True;
         PropertyType = 'Version';
-        ExpectedValue = '18.05';
+        ExpectedValue = $Version;
         ExpressionOperator = 'IsEquals'
         Value = $True
     }
