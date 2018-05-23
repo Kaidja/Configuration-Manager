@@ -1,0 +1,3 @@
+﻿Collection Name,OffSet,Patch Tuesday,Start Time,Duration,Maintenance Window Type,MW Name
+MW1,3,"Tuesday, 12. June 2018",1:00,6,SoftwareUpdatesOnly,Pilot
+MW2,3,"Tuesday, 10. July 2018",1:00,6,SoftwareUpdatesOnly,Production
