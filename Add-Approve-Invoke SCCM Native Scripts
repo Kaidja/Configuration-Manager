@@ -1,0 +1,11 @@
+#Add new Script
+$ScriptPath = 'C:\Users\administrator.Viamonstra\Desktop\Get-BitLockerGetEncryptionMethod.ps1'
+$ScriptName = Split-Path $ScriptPath -Leaf
+$AddNewScript = New-CMScript -ScriptName $ScriptName -ScriptFile $ScriptPath
+
+#Approve the newly added Script
+Approve-CMScript -InputObject $AddNewScript -Comment "Get BitLocker Encryption Method"
+
+#Invoke the script against Device Collection
+$CMScript = Get-CMScript -ScriptName 'Get-BitLockerGetEncryptionMethod.ps1' -Fast
+Invoke-CMScript -CollectionName 'All Clients' -InputObject $CMScript -PassThru
