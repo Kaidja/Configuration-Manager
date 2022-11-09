@@ -2,7 +2,6 @@ Import-Module $env:SMS_ADMIN_UI_PATH.Replace("\bin\i386","\bin\configurationmana
 $SiteCode = Get-PSDrive -PSProvider CMSITE
 Set-Location "$($SiteCode.Name):\"
 
-
 #STEP 1 - Download the content
 $7ZIPURL = 'https://www.7-zip.org/a/7z2201-x64.exe'
 $SourceFolder = 'F:\Sources\Software\7-ZIP\22.01\X64\EXE\7z2201-x64.exe'
