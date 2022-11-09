@@ -1,11 +1,11 @@
-#STEP 0 - Import the Module
 Import-Module $env:SMS_ADMIN_UI_PATH.Replace("\bin\i386","\bin\configurationmanager.psd1")
 $SiteCode = Get-PSDrive -PSProvider CMSITE
 Set-Location "$($SiteCode.Name):\"
 
+
 #STEP 1 - Download the content
-$7ZIPURL = 'https://www.7-zip.org/a/7z1805-x64.exe'
-$SourceFolder = 'E:\Sources\Software\7-ZIP\18.05\X64\EXE\7z1805-x64.exe'
+$7ZIPURL = 'https://www.7-zip.org/a/7z2201-x64.exe'
+$SourceFolder = 'F:\Sources\Software\7-ZIP\22.01\X64\EXE\7z2201-x64.exe'
 Invoke-WebRequest -Uri $7ZIPURL -OutFile $SourceFolder
 
 #STEP 2 - Get the file information
@@ -17,7 +17,7 @@ $FileName = $FileInfo.BaseName
 $ApplicationName = '7-ZIP'
 $CommandLine = "$($FileInfo.Name) /S"
 $DeploymentTypeName = "Install - $FileName"
-$ContentLocation = '\\cm01\sources\Software\7-ZIP\18.05\X64\EXE'
+$ContentLocation = '\\cm01\sources\Software\7-ZIP\22.01\X64\EXE'
 $DistributionPointGroupName = 'All Content'
 $InstallCollectionName = "SWD - $ApplicationName - $Version"
 $LimitingCollectionName = 'All Systems'
@@ -50,6 +50,7 @@ New-CMApplication @AppProperties
 
 $7ZIPFolder = New-CMDetectionClauseDirectory @7ZIPFolderProperties
 $7ZIPFile = New-CMDetectionClauseFile @7ZIPFileProperties
+
 
 #STEP 5 - Create the Deployment Type with detection methods
 $DeploymentTypeProperties = @{
